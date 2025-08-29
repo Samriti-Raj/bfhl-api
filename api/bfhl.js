@@ -20,9 +20,9 @@ app.use(express.json());
 
 // --- Config ---
 const FULL_NAME = "samriti raj"; 
-const DOB = "17091999";          
-const EMAIL = "samriti@example.com";
-const ROLL_NUMBER = "ABCD123";
+const DOB = "04062004";          
+const EMAIL = "samritiraj4@gmail.com";
+const ROLL_NUMBER = "22bcb7095";
 
 // --- Helper functions ---
 function makeUserId(fullName, dob) {
