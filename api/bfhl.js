@@ -1,4 +1,5 @@
 
+
 const express = require("express");
 const app = express();
 app.use(express.json());
@@ -20,7 +21,14 @@ function extractLetters(str) {
   return str.split("").filter(ch => /[a-zA-Z]/.test(ch));
 }
 
-// --- Route ---
+// --- GET Route (Required for BFHL challenge) ---
+app.get("/bfhl", (req, res) => {
+  res.status(200).json({
+    operation_code: 1
+  });
+});
+
+// --- POST Route ---
 app.post("/bfhl", (req, res) => {
   try {
     const data = req.body.data;
@@ -76,12 +84,34 @@ app.post("/bfhl", (req, res) => {
   }
 });
 
+// --- Root route for testing ---
+app.get("/", (req, res) => {
+  res.json({
+    message: "BFHL API is running",
+    endpoints: {
+      "GET /bfhl": "Returns operation_code: 1",
+      "POST /bfhl": "Processes data array and returns categorized results"
+    }
+  });
+});
+
 // --- Export for Vercel ---
 module.exports = app;
 
 // --- Local development ---
 if (require.main === module) {
-  app.listen(3000, () => {
-    console.log("✅ Server running on http://localhost:3000");
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
   });
 }
+
+
+
+
+
+
+
+
+
+
