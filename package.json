@@ -1,0 +1,25 @@
+
+{
+  "name": "bfhl-api",
+  "version": "1.0.0",
+  "description": "BFHL challenge API (POST /bfhl) - ready for Vercel",
+  "main": "api/bfhl.js",
+  "scripts": {
+    "start": "node api/bfhl.js",
+    "dev": "nodemon api/bfhl.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Samriti Raj",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
