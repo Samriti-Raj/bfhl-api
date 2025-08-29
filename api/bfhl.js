@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const app = express();
 app.use(express.json());
@@ -8,32 +6,27 @@ app.use(express.json());
 const FULL_NAME = "samriti raj"; 
 const DOB = "04062004";          
 const EMAIL = "samritiraj4@gmail.com";
-const ROLL_NUMBER = "22bcb7095"
+const ROLL_NUMBER = "22bcb7095";
 
 // --- Helper functions ---
 function makeUserId(fullName, dob) {
   return `${fullName.replace(/\s+/g, "_")}_${dob}`;
 }
-function isIntegerString(s) {
-  return /^-?\d+$/.test(s);
-}
-function extractLetters(str) {
-  return str.split("").filter(ch => /[a-zA-Z]/.test(ch));
+
+function isNumericString(s) {
+  return /^\d+$/.test(s);
 }
 
-// --- GET Route (Required for BFHL challenge) ---
-app.get("/bfhl", (req, res) => {
-  res.status(200).json({
-    operation_code: 1
-  });
-});
+function isAlphabetString(s) {
+  return /^[a-zA-Z]+$/.test(s);
+}
 
-// --- POST Route ---
+// --- POST Route (Only route required per question paper) ---
 app.post("/bfhl", (req, res) => {
   try {
     const data = req.body.data;
     if (!Array.isArray(data)) {
-      return res.status(200).json({ is_success: false, message: "Invalid input" });
+      return res.status(200).json({ is_success: false });
     }
 
     const odd_numbers = [];
@@ -41,29 +34,34 @@ app.post("/bfhl", (req, res) => {
     const alphabets = [];
     const special_characters = [];
     let sum = 0;
-    let allLetters = [];
+    let allAlphabets = [];
 
     data.forEach(item => {
       const str = String(item);
 
-      allLetters.push(...extractLetters(str));
-
-      if (isIntegerString(str)) {
+      if (isNumericString(str)) {
         const num = parseInt(str, 10);
         sum += num;
-        if (Math.abs(num) % 2 === 0) {
-          even_numbers.push(str);
+        if (num % 2 === 0) {
+          even_numbers.push(str); // Keep as string
         } else {
-          odd_numbers.push(str);
+          odd_numbers.push(str);  // Keep as string
         }
-      } else if (/^[a-zA-Z]+$/.test(str)) {
+      } else if (isAlphabetString(str)) {
         alphabets.push(str.toUpperCase());
+        // Collect all individual letters for concatenation
+        allAlphabets.push(...str.split(''));
       } else {
         special_characters.push(str);
+        // Also collect letters from special character strings
+        const letters = str.split('').filter(ch => /[a-zA-Z]/.test(ch));
+        allAlphabets.push(...letters);
       }
     });
 
-    const concat_string = allLetters.reverse()
+    // Concatenation logic: reverse order, alternating caps
+    const concat_string = allAlphabets
+      .reverse()
       .map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
       .join("");
 
@@ -76,21 +74,22 @@ app.post("/bfhl", (req, res) => {
       even_numbers,
       alphabets,
       special_characters,
-      sum: String(sum),
+      sum: String(sum), // Return as string per requirements
       concat_string
     });
   } catch (err) {
-    res.status(200).json({ is_success: false, message: err.message });
+    res.status(200).json({ is_success: false });
   }
 });
 
-// --- Root route for testing ---
+// --- Optional root route for testing (remove if not needed) ---
 app.get("/", (req, res) => {
   res.json({
-    message: "BFHL API is running",
-    endpoints: {
-      "GET /bfhl": "Returns operation_code: 1",
-      "POST /bfhl": "Processes data array and returns categorized results"
+    message: "BFHL API - Use POST /bfhl with data array",
+    example: {
+      method: "POST",
+      url: "/bfhl",
+      body: { "data": ["a","1","334","4","R", "$"] }
     }
   });
 });
