@@ -1,14 +1,11 @@
 
-
 const express = require("express");
-const serverless = require("serverless-http");
-
 const app = express();
 app.use(express.json());
 
-// --- Config (replace with your details) ---
-const FULL_NAME = "samriti raj"; // lowercase only
-const DOB = "17091999";          // ddmmyyyy
+// --- Config ---
+const FULL_NAME = "samriti raj"; 
+const DOB = "17091999";          
 const EMAIL = "samriti@example.com";
 const ROLL_NUMBER = "ABCD123";
 
@@ -41,7 +38,6 @@ app.post("/bfhl", (req, res) => {
     data.forEach(item => {
       const str = String(item);
 
-      // collect all letters for concat_string
       allLetters.push(...extractLetters(str));
 
       if (isIntegerString(str)) {
@@ -59,7 +55,6 @@ app.post("/bfhl", (req, res) => {
       }
     });
 
-    // concat_string: reverse letters + alternating caps
     const concat_string = allLetters.reverse()
       .map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
       .join("");
@@ -83,7 +78,6 @@ app.post("/bfhl", (req, res) => {
 
 // --- Export for Vercel ---
 module.exports = app;
-module.exports.handler = serverless(app);
 
 // --- Local development ---
 if (require.main === module) {
